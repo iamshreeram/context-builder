@@ -13,10 +13,10 @@ type Node struct {
 }
 
 type ContextTree struct {
-	Root      string `json:"root"`
-	Comment   string `json:"comment"`
-	Timestamp int64  `json:"timestamp"`
-	Nodes     []Node `json:"nodes"`
+	Root      string          `json:"root"`
+	Comment   string          `json:"comment"`
+	Timestamp int64           `json:"timestamp"`
+	Nodes     map[string]Node `json:"nodes"`
 }
 
 type ContextTreeManager struct {
@@ -27,18 +27,11 @@ func NewContextTreeManager() *ContextTreeManager {
 	return &ContextTreeManager{}
 }
 
-/*
 func (m *ContextTreeManager) AddNode(id string, dependencies []string) {
-	if m.Tree.Root != "" && m.Tree.Comment != "" {
-		node := Node{ID: id, Dependency: dependencies, Timestamp: time.Now().Unix()}
-		m.Tree.Nodes = append(m.Tree.Nodes, node)
-	} else {
-		fmt.Println("Cannot add node without root and comment")
+	if m.Tree.Nodes == nil {
+		m.Tree.Nodes = make(map[string]Node)
 	}
-}
-*/
 
-func (m *ContextTreeManager) AddNode(id string, dependencies []string) {
 	if m.Tree.Root != "" && m.Tree.Comment != "" {
 		currentTime := time.Now().Unix()
 
@@ -47,18 +40,9 @@ func (m *ContextTreeManager) AddNode(id string, dependencies []string) {
 
 		// Add new node with updated timestamp
 		node := Node{ID: id, Dependency: dependencies, Timestamp: currentTime}
-		m.Tree.Nodes = append(m.Tree.Nodes, node)
+		m.Tree.Nodes[id] = node
 	} else {
 		fmt.Println("Cannot add node without root and comment")
-	}
-}
-
-func (m *ContextTreeManager) DeleteNode(id string) {
-	for i, node := range m.Tree.Nodes {
-		if node.ID == id {
-			m.Tree.Nodes = append(m.Tree.Nodes[:i], m.Tree.Nodes[i+1:]...)
-			break
-		}
 	}
 }
 
@@ -67,24 +51,27 @@ func (m *ContextTreeManager) PrintContextTree() {
 	fmt.Println(string(treeJson))
 }
 
+func (m *ContextTreeManager) DeleteNode(id string) {
+	delete(m.Tree.Nodes, id)
+}
+
 func (m *ContextTreeManager) AddDependency(id, dependency string) {
-	for i, node := range m.Tree.Nodes {
-		if node.ID == id {
-			m.Tree.Nodes[i].Dependency = append(m.Tree.Nodes[i].Dependency, dependency)
-			break
-		}
+	if node, ok := m.Tree.Nodes[id]; ok {
+		node.Dependency = append(node.Dependency, dependency)
+	} else {
+		fmt.Println("Node not found")
 	}
 }
 
 func (m *ContextTreeManager) DeleteDependency(nodeID, dependency string) {
-	for i, node := range m.Tree.Nodes {
-		if node.ID == nodeID {
-			for j, dep := range m.Tree.Nodes[i].Dependency {
-				if dep == dependency {
-					m.Tree.Nodes[i].Dependency = append(m.Tree.Nodes[i].Dependency[:j], m.Tree.Nodes[i].Dependency[j+1:]...)
-					break
-				}
+	if node, ok := m.Tree.Nodes[nodeID]; ok {
+		for i, dep := range node.Dependency {
+			if dep == dependency {
+				node.Dependency = append(node.Dependency[:i], node.Dependency[i+1:]...)
+				break
 			}
 		}
+	} else {
+		fmt.Println("Node not found")
 	}
 }

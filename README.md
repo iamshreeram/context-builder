@@ -26,34 +26,34 @@ go run cmd/main.go
 
 ```json
 {
-  "root": "pharma",
-  "comment": "pharma down | inc123 | z:9867",
-  "timestamp": 1717037126,
-  "nodes": [
-    {
-      "id": "opm",
-      "dependency": [
-        "errors",
-        "connection"
-      ],
-      "timestamp": 1717037122
-    },
-    {
-      "id": "users",
-      "dependency": [
-        "someuser"
-      ],
-      "timestamp": 1717037125
-    },
-    {
-      "id": "infra",
-      "dependency": [
-        "disk",
-        "network"
-      ],
-      "timestamp": 1717037126
+    "root": "pharma",
+    "comment": "pharma down | inc123 | z:9867",
+    "timestamp": 1717037126,
+    "nodes": {
+        "opm": {
+            "id": "opm",
+            "dependency": [
+                "errors",
+                "connection"
+            ],
+            "timestamp": 1717037122
+        },
+        "users": {
+            "id": "users",
+            "dependency": [
+                "someuser"
+            ],
+            "timestamp": 1717037125
+        },
+        "infra": {
+            "id": "infra",
+            "dependency": [
+                "disk",
+                "network"
+            ],
+            "timestamp": 1717037126
+        }
     }
-  ]
 }
 
 ```
