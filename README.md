@@ -8,6 +8,16 @@ The Context Builder allows users to construct a context tree by defining various
 
 ## Use Cases:
 **Troubleshooting**: When diagnosing issues or problems, users can create a context tree to map out potential causes and their relationships to find the root cause efficiently.
+
 **Knowledge Management**: Organizations can utilize this tool to organize and categorize information, making it easier to retrieve and understand complex relationships between different concepts.
+
 **Process Mapping**: By creating a context tree for a specific process or workflow, users can visualize the steps, dependencies, and interactions involved in a clear and concise manner.
+
 **Project Management**: Team members can collaborate on building context trees to plan, track, and communicate project requirements, dependencies, and tasks effectively.
+
+### Run the app:
+
+To start the context-builder example, use the following command in the terminal:
+```
+go run cmd/main.go
+```
