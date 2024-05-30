@@ -21,3 +21,47 @@ To start the context-builder example, use the following command in the terminal:
 ```
 go run cmd/main.go
 ```
+
+**Context-tree Payload** :
+
+```json
+{
+  "root": "pharma",
+  "comment": "pharma down | inc123 | z:9867",
+  "timestamp": 1717037126,
+  "nodes": [
+    {
+      "id": "opm",
+      "dependency": [
+        "errors",
+        "connection"
+      ],
+      "timestamp": 1717037122
+    },
+    {
+      "id": "users",
+      "dependency": [
+        "someuser"
+      ],
+      "timestamp": 1717037125
+    },
+    {
+      "id": "infra",
+      "dependency": [
+        "disk",
+        "network"
+      ],
+      "timestamp": 1717037126
+    }
+  ]
+}
+
+```
+
+### Current features
+1. Agents can create a new event in the context tree.
+2. Agent are able to add or remove tasks associated with the event.
+3. Agent can add new dependencies to the tasks in the context tree.
+
+### Upcoming feature:
+1. Agents will have the ability to subscribe to receive notifications about changes in the context tree.
