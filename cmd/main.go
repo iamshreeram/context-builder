@@ -4,18 +4,26 @@ import (
 	"time"
 
 	"github.com/context-builder/internal/contextTree"
+	"github.com/context-builder/internal/pubsub"
 )
 
+// "github.com/context-builder/internal/pubsub"
 func logger(msg string) {
 	timestamp := time.Now().Format("2006-01-02 15:04:05")
 	println(timestamp + " : " + msg)
 }
 
 func main() {
-	manager := contextTree.NewContextTreeManager()
+
+	natsPubSub, err := pubsub.NewNatsPubSub()
+	if err != nil {
+		panic(err)
+	}
+
+	// manager := contextTree.NewContextTreeManager()
+	manager := contextTree.NewContextTreeManager(natsPubSub)
 
 	// Add root and comment before adding nodes
-
 	logger("INIT : Initializing context-builder app..")
 	time.Sleep(1 * time.Second) // adding delay to simulate real time
 

@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
+
+	"github.com/context-builder/internal/pubsub"
 )
 
 type Node struct {
@@ -20,18 +22,23 @@ type ContextTree struct {
 }
 
 type ContextTreeManager struct {
-	Tree ContextTree
+	Tree   ContextTree
+	PubSub pubsub.PubSub
 }
 
-func NewContextTreeManager() *ContextTreeManager {
-	return &ContextTreeManager{}
+func NewContextTreeManager(pubSub pubsub.PubSub) *ContextTreeManager {
+	return &ContextTreeManager{
+		PubSub: pubSub,
+	}
 }
 
 func (m *ContextTreeManager) AddNode(id string, dependencies []string) {
+	subject := "json-events" // Same as topic; currently, hard-coded
 	if m.Tree.Nodes == nil {
 		m.Tree.Nodes = make(map[string]Node)
 	}
 
+	// pubsub.Printer()
 	if m.Tree.Root != "" && m.Tree.Comment != "" {
 		currentTime := time.Now().Unix()
 
@@ -41,6 +48,10 @@ func (m *ContextTreeManager) AddNode(id string, dependencies []string) {
 		// Add new node with updated timestamp
 		node := Node{ID: id, Dependency: dependencies, Timestamp: currentTime}
 		m.Tree.Nodes[id] = node
+
+		// Publish event to NATS
+		data, _ := json.Marshal(node)
+		m.PubSub.Publish(subject, data)
 	} else {
 		fmt.Println("Cannot add node without root and comment")
 	}
