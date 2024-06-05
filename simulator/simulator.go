@@ -5,18 +5,9 @@ import (
 	"time"
 
 	"github.com/context-builder/internal/contextTree"
-	"github.com/context-builder/internal/pubsub"
 )
 
-func SimulateRealWorld() {
-	// Initialize pubsub client for publishing
-	natsPubSub, err := pubsub.NewNatsPubSub()
-	if err != nil {
-		panic(err)
-	}
-
-	// manager := contextTree.NewContextTreeManager()
-	manager := contextTree.NewContextTreeManager(natsPubSub)
+func SimulateRealWorld(manager *contextTree.ContextTreeManager) {
 
 	// Add root and comment before adding nodes
 	log.Println("INIT : Initializing context-builder app..")

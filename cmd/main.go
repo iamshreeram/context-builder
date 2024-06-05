@@ -3,30 +3,37 @@ package main
 import (
 	"log"
 
-	"github.com/nats-io/nats-server/v2/server"
-	"github.com/nats-io/nats.go"
-
+	"github.com/context-builder/internal/contextTree"
 	"github.com/context-builder/internal/natsserver"
+	"github.com/context-builder/internal/pubsub"
 	"github.com/context-builder/simulator"
+
+	"github.com/nats-io/nats-server/v2/server"
 )
 
 func main() {
 
+	// Logging the start of NATS server
 	log.Println("Starting NATS server..")
+
 	// Initializing NATS Server
 	natsServer := natsserver.NewNatsServer()
-	opts := &server.Options{}
-	ns := natsServer.StartNatsServer(opts)
-	// ns.InProcessConn() // Bypassing TCP for internal Connections
+	ns := natsServer.StartNatsServer(&server.Options{})
+
+	// ns.InProcessConn() // Bypassing TCP for internal Connections (future scope)
+
+	// Waiting for the server to shutdown
 	defer ns.WaitForShutdown()
 
-	// Validating NATS Server is up
-	nc, err := nats.Connect(ns.ClientURL())
+	// Initialize nats pubsub client for context-tree to publish events
+	natsPubSub, err := pubsub.NewNatsPubSub()
 	if err != nil {
-		log.Fatalf("Error connecting to NATS: %v", err)
+		panic(err)
 	}
-	defer nc.Close()
+
+	// Creating a new ContextTreeManager with the initialized natsPubSub
+	manager := contextTree.NewContextTreeManager(natsPubSub)
 
 	// Running real world simulator that publishes events and deletes events
-	go simulator.SimulateRealWorld()
+	go simulator.SimulateRealWorld(manager)
 }
