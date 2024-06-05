@@ -11,11 +11,12 @@ import (
 )
 
 func main() {
-	log.Println("Starting NATS server..")
 
+	log.Println("Starting NATS server..")
 	// Initializing NATS Server
+	natsServer := natsserver.NewNatsServer()
 	opts := &server.Options{}
-	ns := natsserver.StartNatsServer(opts)
+	ns := natsServer.StartNatsServer(opts)
 	// ns.InProcessConn() // Bypassing TCP for internal Connections
 	defer ns.WaitForShutdown()
 

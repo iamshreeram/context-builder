@@ -6,30 +6,34 @@ import (
 	"github.com/nats-io/nats-server/v2/server"
 )
 
-type Server interface {
-	StartNatsServer() error
-	StopNatsServer() error
+type natsServer struct {
+	server *server.Server
 }
 
-func StartNatsServer(opts *server.Options) *server.Server {
-	// Initialize new server with options
-	ns, err := server.NewServer(opts)
-	if err != nil {
-		panic(err)
-	}
+type Server interface {
+	StartNatsServer(opts *server.Options) *server.Server
+	StopNatsServer() *server.Server
+}
 
+func NewNatsServer() Server {
+	return &natsServer{}
+}
+
+func (ns *natsServer) StartNatsServer(opts *server.Options) *server.Server {
+	// Initialize new server with options
+	ns.server, _ = server.NewServer(opts)
 	// Start the server via goroutine
-	go ns.Start()
+	go ns.server.Start()
 
 	// Wait for server to be ready for connections
-	if !ns.ReadyForConnections(4 * time.Second) {
+	if !ns.server.ReadyForConnections(4 * time.Second) {
 		panic("not ready for connection")
 	}
-	return ns
+	return ns.server
 }
 
-func StopNatsServer(ns *server.Server) *server.Server {
+func (ns *natsServer) StopNatsServer() *server.Server {
 	// Shutdown the server (optional)
-	ns.Shutdown()
-	return ns
+	ns.server.Shutdown()
+	return ns.server
 }
