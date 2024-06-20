@@ -24,9 +24,10 @@ func (ns *natsServer) StartNatsServer(opts *server.Options) *server.Server {
 	ns.server, _ = server.NewServer(opts)
 	// Start the server via goroutine
 	go ns.server.Start()
+	// server.FlagSnapshot.Debug = true
 
 	// Wait for server to be ready for connections
-	if !ns.server.ReadyForConnections(4 * time.Second) {
+	if !ns.server.ReadyForConnections(10 * time.Second) {
 		panic("not ready for connection")
 	}
 	return ns.server

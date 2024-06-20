@@ -6,7 +6,6 @@ import (
 	"github.com/context-builder/internal/contextTree"
 	"github.com/context-builder/internal/natsserver"
 	"github.com/context-builder/internal/pubsub"
-	"github.com/context-builder/simulator"
 
 	"github.com/nats-io/nats-server/v2/server"
 )
@@ -18,10 +17,10 @@ func main() {
 
 	// Initializing NATS Server
 	natsServer := natsserver.NewNatsServer()
-	ns := natsServer.StartNatsServer(&server.Options{})
+	ns := natsServer.StartNatsServer(&server.Options{Trace: true})
 
-	// ns.InProcessConn() // Bypassing TCP for internal Connections (future scope)
-
+	ns.ConfigureLogger()
+	ns.InProcessConn() // Bypassing TCP for internal Connections (future scope)
 	// Waiting for the server to shutdown
 	defer ns.WaitForShutdown()
 
@@ -32,8 +31,9 @@ func main() {
 	}
 
 	// Creating a new ContextTreeManager with the initialized natsPubSub
-	manager := contextTree.NewContextTreeManager(natsPubSub)
+	// manager := contextTree.NewContextTreeManager(natsPubSub)
+	contextTree.NewContextTreeManager(natsPubSub)
 
 	// Running real world simulator that publishes events and deletes events
-	go simulator.SimulateRealWorld(manager)
+	// go simulator.SimulateRealWorld(manager)
 }
